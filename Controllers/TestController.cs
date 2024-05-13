@@ -61,8 +61,15 @@ namespace Calibre_Backend.Controllers
         [HttpGet (Name = "GetWeaponImage")]
         public IActionResult GetWeaponImage(String Name)
         {
-            Byte[] b = System.IO.File.ReadAllBytes("./Assets/Weapons/" + Name + ".webp");   // You can use your own method over here.         
+            Byte[] b = System.IO.File.ReadAllBytes("./Assets/Weapons/" + Name + ".webp");        
             return File(b, "image/webp");
+        }
+
+        [HttpGet(Name = "GetWeaponMakeImage")]
+        public IActionResult GetWeaponMakeImage(String Name)
+        {
+            Byte[] b = System.IO.File.ReadAllBytes("./Assets/WeaponMake/" + Name + ".png");      
+            return File(b, "image/png");
         }
     }
 }
