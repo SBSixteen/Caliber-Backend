@@ -8,13 +8,16 @@ namespace Calibre_Backend.Model
         public String WeaponName { get; set; }
         public String WeaponCaliber { get; set; }
         public String WeaponMake { get; set; }
-        public String WeaponWeight {  get; set; }
+        public double WeaponWeight {  get; set; }
         public int rof {  get; set; }
         public int efr {  get; set; }
         public String WeaponDescription {  get; set; }
         public String WeaponType {  get; set; }
+        public String WeaponTypeShort { get; set; }
+        public String WeaponOrigin { get; set; }
 
-        public Weapon(String name, String caliber, String make, String weight, int rate, int range, String desc, string type)
+
+        public Weapon(String name, String caliber, String make, double weight, int rate, int range, String desc, String type, String Short, String Origin)
         {
             WeaponName = name;
             WeaponCaliber = caliber;
@@ -24,28 +27,29 @@ namespace Calibre_Backend.Model
             rof = rate;
             efr = range;
             WeaponDescription = desc;
-            WeaponType = type;
-            
+            WeaponTypeShort = Short;
+            WeaponOrigin = Origin;
         }
 
         public Weapon()
         {
-            WeaponName = "";
-            WeaponCaliber = "";
-            WeaponMake = "";
-            WeaponWeight = "";
-            WeaponType = "";
+            WeaponName = "<NO DATA>";
+            WeaponCaliber = "<NO DATA>";
+            WeaponMake = "<NO DATA>";
+            WeaponWeight = 0.0;
+            WeaponType = "<NO DATA>";
             rof = 0;
             efr = 0;
-            WeaponDescription = "";
-            WeaponType = "";
+            WeaponDescription = "<NO DATA>";
+            WeaponType = "<NO DATA>";
+            WeaponTypeShort = "<ND>";
+            WeaponOrigin = "<NO DATA>";
         }
 
         override
         public String ToString()
         {
             return $"{WeaponName} | {WeaponMake} | {WeaponCaliber}";
-
         }
     }
 }

@@ -19,8 +19,8 @@ namespace Calibre_Backend.Controllers
         }
 
         // GET: api/<TestController>
-        [HttpGet (Name = "Get All Weapons")]
-        public async Task<List<String>> Get()
+        [HttpGet (Name = "Get All Weapons Names")]
+        public async Task<List<String>> GetAllWeaponNames()
         {
             await _connection.OpenAsync();
 
@@ -42,8 +42,13 @@ namespace Calibre_Backend.Controllers
         {
             await _connection.OpenAsync();
 
-            using var command = new MySqlCommand($"SELECT `ammunition`, `model`, `make`, `weight`, `rof`, `efr`, `Description`, `SHORT` FROM `weapons` JOIN weapon_type on weapons.TYPE = weapon_type.TYPE WHERE weapons.model = '{WeaponName}'", _connection);
+            using var command = new MySqlCommand($"SELECT `ammunition`, `model`, `make`, `weight`, `rof`, `efr`, `Description`, weapons.Type, `SHORT`, `ORIGIN` FROM `weapons` JOIN weapon_type on weapons.TYPE = weapon_type.TYPE WHERE weapons.model = '{WeaponName}'", _connection);
             using var reader = await command.ExecuteReaderAsync();
+
+            if (!reader.HasRows)
+            {
+                return new Weapon();
+            }
 
             List<String> A = new List<String>();
 
@@ -51,25 +56,65 @@ namespace Calibre_Backend.Controllers
 
             while (await reader.ReadAsync())
             {
-                X = new Weapon(reader.GetString(1), reader.GetString(0), reader.GetString(2), reader.GetDouble(3) + "", reader.GetInt32(4), reader.GetInt32(5), reader.GetString(6), reader.GetString(7));
+                X = new Weapon(reader.GetString(1), reader.GetString(0), reader.GetString(2), reader.GetDouble(3), reader.GetInt32(4), reader.GetInt32(5), reader.GetString(6), reader.GetString(7), reader.GetString(8), reader.GetString(9));
             }
 
             Console.WriteLine(X.ToString());
             return X;
         }
 
+        [HttpGet(Name = "Get All Weapons")]
+        public async Task<List<Weapon>> GetAllWeapons()
+        {
+            await _connection.OpenAsync();
+
+            using var command = new MySqlCommand($"SELECT `ammunition`, `model`, `make`, `weight`, `rof`, `efr`, `Description`, weapons.Type, `SHORT`, `ORIGIN` FROM `weapons` JOIN weapon_type on weapons.TYPE = weapon_type.TYPE", _connection);
+            using var reader = await command.ExecuteReaderAsync();
+
+            if (!reader.HasRows)
+            {
+                return new List<Weapon>();
+            }
+
+            List<Weapon> A = new List<Weapon>();
+
+            Weapon X = new Weapon();
+
+            while (await reader.ReadAsync())
+            {
+                X = new Weapon(reader.GetString(1), reader.GetString(0), reader.GetString(2), reader.GetDouble(3), reader.GetInt32(4), reader.GetInt32(5), reader.GetString(6), reader.GetString(7), reader.GetString(8), reader.GetString(9));
+                A.Add(X);
+            }
+
+            return A;
+        }
+
         [HttpGet (Name = "GetWeaponImage")]
         public IActionResult GetWeaponImage(String Name)
         {
-            Byte[] b = System.IO.File.ReadAllBytes("./Assets/Weapons/" + Name + ".webp");        
-            return File(b, "image/webp");
+            try
+            {
+                Byte[] b = System.IO.File.ReadAllBytes("./Assets/Weapons/" + Name + ".webp");
+                return File(b, "image/webp");
+            }catch (Exception ex)
+            {
+                Byte[] b = System.IO.File.ReadAllBytes("./Assets/Placeholders/NoDataUniversal.png");
+                return File(b, "image/png");
+            }
         }
 
         [HttpGet(Name = "GetWeaponMakeImage")]
         public IActionResult GetWeaponMakeImage(String Name)
         {
-            Byte[] b = System.IO.File.ReadAllBytes("./Assets/WeaponMake/" + Name + ".png");      
-            return File(b, "image/png");
+            try
+            {
+                Byte[] b = System.IO.File.ReadAllBytes("./Assets/WeaponMake/" + Name + ".png");
+                return File(b, "image/png");
+            }catch(Exception ex)
+            {
+                Byte[] b = System.IO.File.ReadAllBytes("./Assets/Placeholders/NoDataUniversal.png");
+                return File(b, "image/png");
+            }
         }
     }
 }
