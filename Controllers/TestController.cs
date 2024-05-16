@@ -89,6 +89,32 @@ namespace Calibre_Backend.Controllers
             return A;
         }
 
+        [HttpGet(Name = "Get All Weapons by Type")]
+        public async Task<List<Weapon>> GetAllWeaponsByType(String type)
+        {
+            await _connection.OpenAsync();
+
+            using var command = new MySqlCommand($"SELECT `ammunition`, `model`, `make`, `weight`, `rof`, `efr`, `Description`, weapons.Type, `SHORT`, `ORIGIN` FROM `weapons` JOIN weapon_type on weapons.TYPE = weapon_type.TYPE where  weapon_type.SHORT = '{type}'", _connection);
+            using var reader = await command.ExecuteReaderAsync();
+
+            if (!reader.HasRows)
+            {
+                return new List<Weapon>();
+            }
+
+            List<Weapon> A = new List<Weapon>();
+
+            Weapon X = new Weapon();
+
+            while (await reader.ReadAsync())
+            {
+                X = new Weapon(reader.GetString(1), reader.GetString(0), reader.GetString(2), reader.GetDouble(3), reader.GetInt32(4), reader.GetInt32(5), reader.GetString(6), reader.GetString(7), reader.GetString(8), reader.GetString(9));
+                A.Add(X);
+            }
+
+            return A;
+        }
+
         [HttpGet (Name = "GetWeaponImage")]
         public IActionResult GetWeaponImage(String Name)
         {
