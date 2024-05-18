@@ -3,6 +3,7 @@
     public static class devUtil
     {
         private static readonly uint[] _lookup32 = CreateLookup32();
+        public static Random random = new Random();
 
         private static uint[] CreateLookup32()
         {
@@ -26,6 +27,11 @@
                 result[2 * i + 1] = (char)(val >> 16);
             }
             return new string(result);
+        }
+
+        public static double NextDouble(double MinValue, double MaxValue)
+        {
+            return random.NextDouble() * (MaxValue - MinValue) + MinValue;
         }
     }
 }

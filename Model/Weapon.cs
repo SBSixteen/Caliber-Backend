@@ -15,9 +15,11 @@ namespace Calibre_Backend.Model
         public String WeaponType {  get; set; }
         public String WeaponTypeShort { get; set; }
         public String WeaponOrigin { get; set; }
+        public double WeaponDiscount { get; set; }
+        public double WeaponPrice { get; set; }
 
 
-        public Weapon(String name, String caliber, String make, double weight, int rate, int range, String desc, String type, String Short, String Origin)
+        public Weapon(String name, String caliber, String make, double weight, int rate, int range, String desc, String type, String Short, String Origin, double weaponPrice, double weaponDiscount)
         {
             WeaponName = name;
             WeaponCaliber = caliber;
@@ -29,6 +31,8 @@ namespace Calibre_Backend.Model
             WeaponDescription = desc;
             WeaponTypeShort = Short;
             WeaponOrigin = Origin;
+            WeaponPrice = weaponPrice;
+            WeaponDiscount = weaponDiscount;
         }
 
         public Weapon()
@@ -44,6 +48,9 @@ namespace Calibre_Backend.Model
             WeaponType = "<NO DATA>";
             WeaponTypeShort = "<ND>";
             WeaponOrigin = "<NO DATA>";
+            WeaponDiscount = 0.0;
+            WeaponPrice = 0.0;
+
         }
 
         override

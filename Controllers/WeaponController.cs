@@ -1,7 +1,10 @@
 ﻿using Calibre_Backend.Model;
+using Calibre_Backend.Utility;
 using Microsoft.AspNetCore.Mvc;
 using MySqlConnector;
 using System.Collections.Generic;
+using System.Reflection;
+using System.Security.Cryptography;
 
 // For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 
@@ -9,11 +12,11 @@ namespace Calibre_Backend.Controllers
 {
     [Route("api/[controller]/[action]")]
     [ApiController]
-    public class TestController : ControllerBase
+    public class WeaponController : ControllerBase
     {
         private readonly MySqlConnection _connection;
 
-        public TestController(MySqlConnection connection)
+        public WeaponController(MySqlConnection connection)
         {
             _connection = connection;
         }
@@ -34,6 +37,7 @@ namespace Calibre_Backend.Controllers
                 A.Add((String)reader.GetValue(0));
             }
 
+            _connection.Close();
             return A;
         }
 
@@ -42,7 +46,7 @@ namespace Calibre_Backend.Controllers
         {
             await _connection.OpenAsync();
 
-            using var command = new MySqlCommand($"SELECT `ammunition`, `model`, `make`, `weight`, `rof`, `efr`, `Description`, weapons.Type, `SHORT`, `ORIGIN` FROM `weapons` JOIN weapon_type on weapons.TYPE = weapon_type.TYPE WHERE weapons.model = '{WeaponName}'", _connection);
+            using var command = new MySqlCommand($"SELECT `ammunition`, `model`, `make`, `weight`, `rof`, `efr`, `Description`, weapons.Type, `SHORT`, `ORIGIN`, `Price`, `Discount` FROM `weapons` JOIN weapon_type on weapons.TYPE = weapon_type.TYPE WHERE weapons.model = '{WeaponName}'", _connection);
             using var reader = await command.ExecuteReaderAsync();
 
             if (!reader.HasRows)
@@ -56,7 +60,7 @@ namespace Calibre_Backend.Controllers
 
             while (await reader.ReadAsync())
             {
-                X = new Weapon(reader.GetString(1), reader.GetString(0), reader.GetString(2), reader.GetDouble(3), reader.GetInt32(4), reader.GetInt32(5), reader.GetString(6), reader.GetString(7), reader.GetString(8), reader.GetString(9));
+                X = new Weapon(reader.GetString(1), reader.GetString(0), reader.GetString(2), reader.GetDouble(3), reader.GetInt32(4), reader.GetInt32(5), reader.GetString(6), reader.GetString(7), reader.GetString(8), reader.GetString(9), reader.GetDouble(10),reader.GetDouble(11));
             }
 
             Console.WriteLine(X.ToString());
@@ -68,7 +72,7 @@ namespace Calibre_Backend.Controllers
         {
             await _connection.OpenAsync();
 
-            using var command = new MySqlCommand($"SELECT `ammunition`, `model`, `make`, `weight`, `rof`, `efr`, `Description`, weapons.Type, `SHORT`, `ORIGIN` FROM `weapons` JOIN weapon_type on weapons.TYPE = weapon_type.TYPE", _connection);
+            using var command = new MySqlCommand($"SELECT `ammunition`, `model`, `make`, `weight`, `rof`, `efr`, `Description`, weapons.Type, `SHORT`, `ORIGIN`, `Price`, `Discount`  FROM `weapons` JOIN weapon_type on weapons.TYPE = weapon_type.TYPE", _connection);
             using var reader = await command.ExecuteReaderAsync();
 
             if (!reader.HasRows)
@@ -82,7 +86,7 @@ namespace Calibre_Backend.Controllers
 
             while (await reader.ReadAsync())
             {
-                X = new Weapon(reader.GetString(1), reader.GetString(0), reader.GetString(2), reader.GetDouble(3), reader.GetInt32(4), reader.GetInt32(5), reader.GetString(6), reader.GetString(7), reader.GetString(8), reader.GetString(9));
+                X = new Weapon(reader.GetString(1), reader.GetString(0), reader.GetString(2), reader.GetDouble(3), reader.GetInt32(4), reader.GetInt32(5), reader.GetString(6), reader.GetString(7), reader.GetString(8), reader.GetString(9), reader.GetDouble(10), reader.GetDouble(11));
                 A.Add(X);
             }
 
@@ -94,7 +98,7 @@ namespace Calibre_Backend.Controllers
         {
             await _connection.OpenAsync();
 
-            using var command = new MySqlCommand($"SELECT `ammunition`, `model`, `make`, `weight`, `rof`, `efr`, `Description`, weapons.Type, `SHORT`, `ORIGIN` FROM `weapons` JOIN weapon_type on weapons.TYPE = weapon_type.TYPE where  weapon_type.SHORT = '{type}'", _connection);
+            using var command = new MySqlCommand($"SELECT `ammunition`, `model`, `make`, `weight`, `rof`, `efr`, `Description`, weapons.Type, `SHORT`, `ORIGIN`, `Price`, `Discount` FROM `weapons` JOIN weapon_type on weapons.TYPE = weapon_type.TYPE where  weapon_type.SHORT = '{type}'", _connection);
             using var reader = await command.ExecuteReaderAsync();
 
             if (!reader.HasRows)
@@ -108,7 +112,7 @@ namespace Calibre_Backend.Controllers
 
             while (await reader.ReadAsync())
             {
-                X = new Weapon(reader.GetString(1), reader.GetString(0), reader.GetString(2), reader.GetDouble(3), reader.GetInt32(4), reader.GetInt32(5), reader.GetString(6), reader.GetString(7), reader.GetString(8), reader.GetString(9));
+                X = new Weapon(reader.GetString(1), reader.GetString(0), reader.GetString(2), reader.GetDouble(3), reader.GetInt32(4), reader.GetInt32(5), reader.GetString(6), reader.GetString(7), reader.GetString(8), reader.GetString(9), reader.GetDouble(10), reader.GetDouble(11));
                 A.Add(X);
             }
 
@@ -141,6 +145,44 @@ namespace Calibre_Backend.Controllers
                 Byte[] b = System.IO.File.ReadAllBytes("./Assets/Placeholders/NoDataUniversal.png");
                 return File(b, "image/png");
             }
+        }
+        [HttpPatch(Name = "UpdateDiscounts")]
+        public async Task<bool> UpdateWeaponDiscounts()
+        {
+            var names = await GetAllWeaponNames();
+            
+            await _connection.OpenAsync();
+
+            foreach (var name in names)
+            {
+                double value = 1.0;
+
+                if (devUtil.random.NextDouble(0,1.0) > 0.8)
+                {
+                    value = devUtil.random.NextDouble(0.87,1.13);
+                }
+                var command = new MySqlCommand($"UPDATE `weapons` SET `Discount` = '{value}' WHERE `weapons`.`model` = '{name}';", _connection);
+                var reader = await command.ExecuteNonQueryAsync();
+            }
+
+            return true;
+        }
+
+        [HttpPatch(Name = "ResetDiscounts")]
+        public async Task<bool> ResetWeaponDiscounts()
+        {
+            var names = await GetAllWeaponNames();
+            await _connection.OpenAsync();
+
+            foreach (var name in names)
+            {
+                double value = 1.0;
+
+                var command = new MySqlCommand($"UPDATE `weapons` SET `Discount` = '{value}' WHERE `weapons`.`model` = '{name}';", _connection);
+                var reader = await command.ExecuteNonQueryAsync();
+            }
+
+            return true;
         }
     }
 }
