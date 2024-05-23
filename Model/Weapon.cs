@@ -1,7 +1,4 @@
-﻿using System.Xml.Linq;
-using System;
-
-namespace Calibre_Backend.Model
+﻿namespace Calibre_Backend.Model
 {
     public class Weapon
     {
