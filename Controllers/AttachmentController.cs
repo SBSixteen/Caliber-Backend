@@ -28,7 +28,7 @@ namespace Calibre_Backend.Controllers
 
             while (await reader.ReadAsync())
             {
-                Attachment A = new Attachment(reader.GetString(0), reader.GetString(2), reader.GetString(1), reader.GetString(3), reader.GetDouble(4), reader.GetInt32(5), reader.GetInt32(6), reader.GetInt32(7), reader.GetInt32(8), reader.GetInt32(9), reader.GetInt32(10));
+                Attachment A = new Attachment(reader.GetString(0), reader.GetString(2), reader.GetString(1), reader.GetString(3), reader.GetDouble(4), reader.GetInt32(5), reader.GetInt32(6), reader.GetInt32(7), reader.GetInt32(8), reader.GetInt32(9), reader.GetInt32(10), reader.GetInt32(11));
                 result.Add(A);
             }
 
@@ -48,7 +48,27 @@ namespace Calibre_Backend.Controllers
 
             while (await reader.ReadAsync())
             {
-                Attachment A = new Attachment(reader.GetString(0), reader.GetString(2), reader.GetString(1), reader.GetString(3), reader.GetDouble(4), reader.GetInt32(5), reader.GetInt32(6), reader.GetInt32(7), reader.GetInt32(8), reader.GetInt32(9), reader.GetInt32(10));
+                Attachment A = new Attachment(reader.GetString(0), reader.GetString(2), reader.GetString(1), reader.GetString(3), reader.GetDouble(4), reader.GetInt32(5), reader.GetInt32(6), reader.GetInt32(7), reader.GetInt32(8), reader.GetInt32(9), reader.GetInt32(10), reader.GetInt32(11));
+                result.Add(A);
+            }
+
+            return result;
+        }
+
+        [HttpGet(Name = "Get Dovetail Mountable Attachmentts")]
+        public async Task<List<Attachment>> GetDovetailMountableAttachment()
+        {
+
+            await _connection.OpenAsync();
+
+            using var command = new MySqlCommand("SELECT * FROM ATTACHMENTS WHERE ATTACHES_TO_DOVETAIL = 1;", _connection);
+            using var reader = await command.ExecuteReaderAsync();
+
+            List<Attachment> result = new List<Attachment>();
+
+            while (await reader.ReadAsync())
+            {
+                Attachment A = new Attachment(reader.GetString(0), reader.GetString(2), reader.GetString(1), reader.GetString(3), reader.GetDouble(4), reader.GetInt32(5), reader.GetInt32(6), reader.GetInt32(7), reader.GetInt32(8), reader.GetInt32(9), reader.GetInt32(10), reader.GetInt32(11));
                 result.Add(A);
             }
 
@@ -68,7 +88,7 @@ namespace Calibre_Backend.Controllers
 
             while (await reader.ReadAsync())
             {
-                Attachment A = new Attachment(reader.GetString(0), reader.GetString(2), reader.GetString(1), reader.GetString(3), reader.GetDouble(4), reader.GetInt32(5), reader.GetInt32(6), reader.GetInt32(7), reader.GetInt32(8), reader.GetInt32(9), reader.GetInt32(10));
+                Attachment A = new Attachment(reader.GetString(0), reader.GetString(2), reader.GetString(1), reader.GetString(3), reader.GetDouble(4), reader.GetInt32(5), reader.GetInt32(6), reader.GetInt32(7), reader.GetInt32(8), reader.GetInt32(9), reader.GetInt32(10), reader.GetInt32(11));
                 result.Add(A);
             }
 
@@ -88,7 +108,27 @@ namespace Calibre_Backend.Controllers
 
             while (await reader.ReadAsync())
             {
-                Attachment A = new Attachment(reader.GetString(0), reader.GetString(2), reader.GetString(1), reader.GetString(3), reader.GetDouble(4), reader.GetInt32(5), reader.GetInt32(6), reader.GetInt32(7), reader.GetInt32(8), reader.GetInt32(9), reader.GetInt32(10));
+                Attachment A = new Attachment(reader.GetString(0), reader.GetString(2), reader.GetString(1), reader.GetString(3), reader.GetDouble(4), reader.GetInt32(5), reader.GetInt32(6), reader.GetInt32(7), reader.GetInt32(8), reader.GetInt32(9), reader.GetInt32(10), reader.GetInt32(11));
+                result.Add(A);
+            }
+
+            return result;
+        }
+
+        [HttpGet(Name = "Get Attachments that have Dovetail Mount")]
+        public async Task<List<Attachment>> GetAttachmentsWithDovetailMount()
+        {
+
+            await _connection.OpenAsync();
+
+            using var command = new MySqlCommand($"SELECT * FROM ATTACHMENTS WHERE DOVETAIL_MOUNT <> 0;", _connection);
+            using var reader = await command.ExecuteReaderAsync();
+
+            List<Attachment> result = new List<Attachment>();
+
+            while (await reader.ReadAsync())
+            {
+                Attachment A = new Attachment(reader.GetString(0), reader.GetString(2), reader.GetString(1), reader.GetString(3), reader.GetDouble(4), reader.GetInt32(5), reader.GetInt32(6), reader.GetInt32(7), reader.GetInt32(8), reader.GetInt32(9), reader.GetInt32(10), reader.GetInt32(11));
                 result.Add(A);
             }
 
@@ -108,7 +148,7 @@ namespace Calibre_Backend.Controllers
 
             while (await reader.ReadAsync())
             {
-                Attachment A = new Attachment(reader.GetString(0), reader.GetString(2), reader.GetString(1), reader.GetString(3), reader.GetDouble(4), reader.GetInt32(5), reader.GetInt32(6), reader.GetInt32(7), reader.GetInt32(8), reader.GetInt32(9), reader.GetInt32(10));
+                Attachment A = new Attachment(reader.GetString(0), reader.GetString(2), reader.GetString(1), reader.GetString(3), reader.GetDouble(4), reader.GetInt32(5), reader.GetInt32(6), reader.GetInt32(7), reader.GetInt32(8), reader.GetInt32(9), reader.GetInt32(10), reader.GetInt32(11));
                 result.Add(A);
             }
 
@@ -128,7 +168,7 @@ namespace Calibre_Backend.Controllers
 
             while (await reader.ReadAsync())
             {
-                Attachment A = new Attachment(reader.GetString(0), reader.GetString(2), reader.GetString(1), reader.GetString(3), reader.GetDouble(4), reader.GetInt32(5), reader.GetInt32(6), reader.GetInt32(7), reader.GetInt32(8), reader.GetInt32(9), reader.GetInt32(10));
+                Attachment A = new Attachment(reader.GetString(0), reader.GetString(2), reader.GetString(1), reader.GetString(3), reader.GetDouble(4), reader.GetInt32(5), reader.GetInt32(6), reader.GetInt32(7), reader.GetInt32(8), reader.GetInt32(9), reader.GetInt32(10), reader.GetInt32(11));
                 result.Add(A);
             }
 

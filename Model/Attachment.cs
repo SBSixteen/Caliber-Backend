@@ -13,8 +13,9 @@
         public int AttachmentPiccatiny_Right { get; set; }
         public int Attachment_AttachesToRail { get; set; }
         public int Attachment_AttachesToDovetail { get; set; }
+        public int Attachment_DovetailMount { get; set; }
 
-        public Attachment(String name, String desc, String part, String make, double price, int top, int bottom, int left, int right, int attach, int dovetail)
+        public Attachment(String name, String desc, String part, String make, double price, int top, int bottom, int left, int right, int attach, int dovetail, int dovetailmount)
         {
             AttachmentName = name;
             AttachmentDescription = desc;
@@ -27,6 +28,7 @@
             AttachmentPiccatiny_Right = right;
             Attachment_AttachesToRail = attach;
             Attachment_AttachesToDovetail = dovetail;
+            Attachment_DovetailMount = dovetailmount;
         }
 
 
