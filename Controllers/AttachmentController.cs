@@ -1,6 +1,7 @@
 ﻿using Calibre_Backend.Model;
 using Microsoft.AspNetCore.Mvc;
 using MySqlConnector;
+using System.Data;
 
 namespace Calibre_Backend.Controllers
 {
@@ -173,6 +174,43 @@ namespace Calibre_Backend.Controllers
             }
 
             return result;
+        }
+
+        [HttpGet(Name = "Get Compatible Attachments on a weapon by Position")]
+        public async Task<List<Attachment>> GetCompatibleWeaponPositionAttachments(string weaponName, string position)
+        {
+            await _connection.OpenAsync();
+
+            using var command = new MySqlCommand($"SELECT * FROM `ATTACHMENTS` JOIN `WEAPON_ATTACHMENT` on attachments.NAME = WEAPON_ATTACHMENT.PART_NAME WHERE WEAPON_ATTACHMENT.WEP_NAME = '{weaponName}' AND ATTACHMENTS.PART = '{position}';", _connection);
+            using var reader = await command.ExecuteReaderAsync();
+
+            List<Attachment> result = new List<Attachment>();
+
+            while (await reader.ReadAsync())
+            {
+                Attachment A = new Attachment(reader.GetString(0), reader.GetString(2), reader.GetString(1), reader.GetString(3), reader.GetDouble(4), reader.GetInt32(5), reader.GetInt32(6), reader.GetInt32(7), reader.GetInt32(8), reader.GetInt32(9), reader.GetInt32(10), reader.GetInt32(11));
+                result.Add(A);
+            }
+
+            return result;
+        }
+
+        [HttpGet(Name = "Get Count Compatible Attachments on a weapon by Position")]
+        public async Task<int> GetCountCompatibleWeaponPositionAttachments(string weaponName, string position)
+        {
+            await _connection.OpenAsync();
+
+            using var command = new MySqlCommand($"SELECT COUNT(*) FROM `ATTACHMENTS` JOIN `WEAPON_ATTACHMENT` on attachments.NAME = WEAPON_ATTACHMENT.PART_NAME WHERE WEAPON_ATTACHMENT.WEP_NAME = '{weaponName}' AND ATTACHMENTS.PART = '{position}';", _connection);
+            using var reader = await command.ExecuteReaderAsync();
+
+            int len = 0;
+
+            while (await reader.ReadAsync())
+            {
+                len = reader.GetInt32(0);
+            }
+
+            return len;
         }
 
         [HttpGet(Name = "Get Attachment Image")]
