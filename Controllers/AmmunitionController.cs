@@ -34,6 +34,44 @@ namespace Calibre_Backend.Controllers
             return A;
         }
 
+        [HttpGet(Name = "Get Ammunition")]
+        public async Task<Ammunition> GetAmmunition(String caliber, String variant)
+        {
+            await _connection.OpenAsync();
+
+            Console.WriteLine($"SELECT * FROM AMMUNITION_VARIANTS WHERE CALIBER = '{caliber}' AND NAME = '{variant}'");
+
+            using var command = new MySqlCommand($"SELECT * FROM AMMUNITION_VARIANTS WHERE CALIBER = '{caliber}' AND NAME = '{variant}';", _connection);
+            using var reader = await command.ExecuteReaderAsync();
+
+            Ammunition A = new Ammunition();
+
+            while (await reader.ReadAsync())
+            {
+                A = new Ammunition(reader.GetString(0), reader.GetString(1), reader.GetString(2), reader.GetInt32(6), reader.GetInt32(4), reader.GetInt32(5), reader.GetDouble(3));
+            }
+
+            return A;
+        }
+
+        [HttpGet(Name = "Get All Calibers")]
+        public async Task<List<String>> GetAllCalibers()
+        {
+            await _connection.OpenAsync();
+
+            using var command = new MySqlCommand("SELECT * FROM AMMUNITION;", _connection);
+            using var reader = await command.ExecuteReaderAsync();
+
+            List<String> A = new List<String>();
+
+            while (await reader.ReadAsync())
+            {
+                A.Add(reader.GetString(0));
+            }
+
+            return A;
+        }
+
         [HttpGet(Name = "Get Ammunition by Caliber")]
         public async Task<List<Ammunition>> GetAmmunitionByCaliber(string caliber)
         {

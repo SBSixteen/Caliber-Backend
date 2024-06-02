@@ -176,6 +176,25 @@ namespace Calibre_Backend.Controllers
             return result;
         }
 
+        [HttpGet(Name = "Get Count of Default Kit")]
+        public async Task<int> GetDefaultKitCountOfWeapon(string gunname)
+        {
+
+            await _connection.OpenAsync();
+
+            using var command = new MySqlCommand($"SELECT Count(*) FROM `ATTACHMENTS` JOIN `WEAPON_DEFAULTS` on attachments.NAME = weapon_defaults.ATTACHMENT WHERE weapon_defaults.WEAPON = '{gunname}';", _connection);
+            using var reader = await command.ExecuteReaderAsync();
+
+            int k = 0;
+
+            while (await reader.ReadAsync())
+            {
+                k = reader.GetInt32(0);
+            }
+
+            return k;
+        }
+
         [HttpGet(Name = "Get Compatible Attachments on a weapon by Position")]
         public async Task<List<Attachment>> GetCompatibleWeaponPositionAttachments(string weaponName, string position)
         {
