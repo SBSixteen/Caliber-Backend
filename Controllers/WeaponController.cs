@@ -154,7 +154,7 @@ namespace Calibre_Backend.Controllers
             {
                 double value = 1.0;
 
-                if (devUtil.random.NextDouble(0,1.0) > 0.8)
+                if (devUtil.random.NextDouble(0,1.0) > 0.2)
                 {
                     value = devUtil.random.NextDouble(0.87,1.13);
                 }
